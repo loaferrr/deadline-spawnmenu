@@ -1,5 +1,5 @@
 # deadline-spawnmenu
-mod menu for deadline using https://recoil-group.github.io/deadline-modding/making-mods/scripting/api/
+poorly made* mod menu for deadline using https://recoil-group.github.io/deadline-modding/making-mods/scripting/api/
 
 ## if your lazy to open the files & copy it, then deal with this possibly outdated crap 
 
