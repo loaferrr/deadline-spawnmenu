@@ -1,5 +1,8 @@
 on_client_event:Connect(function(playername, args)
     player = players.get(playername)
+    if args[1] == "wepnames" then
+        return config.weapon_names
+    end
     if args[1] == "giveweapon" then
         player.set_weapon(args[2], args[3], "[]")
         player.equip_weapon(args[2])

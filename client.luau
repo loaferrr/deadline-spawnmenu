@@ -1,4 +1,5 @@
-local weapon_names = {
+local actual_wepnames = fire_server("wepnames")
+local weapon_names = actual_wepnames or {
     "AK12", "AK308", "AK_545", "AK_545_Carbine", "AK_762", "AK_9", "AUG_A3", 
     "Crayon", "EDC_X9", "F1", "G3", "KF416", "M11_EOD", "M4A1", "M67", "M84", 
     "M8HC", "M9", "Makarov", "MK9", "Molotov", "MosinNagant", "MP133", "MP5", 
@@ -7,7 +8,7 @@ local weapon_names = {
     "TT33", "UMP", "Turret", "Vector", "Zarya3"
 }
 
-local function breh(tabler)
+function breh(tabler)
 	for key, value in pairs(tabler) do
 		if type(value) == "table" then
 			iris.Tree({key})
@@ -36,7 +37,12 @@ iris:Connect(function()
 		SoundBrowser(showSoundBrowser)
 	end
 	
-	iris.Window({"spawnlist"})
+	local draw_window = iris.State(true)
+	iris.Checkbox({"show spawnlist"}, {isChecked = draw_window})
+	if draw_window.value == false then
+		return
+	end
+	iris.Window({"spawnlist", nil, nil, nil, true})
 	
 	iris.MenuBar()
 		iris.MenuToggle({ "Sound Browser" }, { isChecked = showSoundBrowser })
@@ -74,11 +80,20 @@ iris:Connect(function()
 	local spawnposState = iris.State("player")
 	local customV3 = iris.State(Vector3.new())
 	local healthState = iris.State(100)
+	
+	--tooltips broken until iris gets updated on deadline ig.
+	if iris.Checkbox({"dummy"}, {isChecked = dummy}).hovered() then
+		--iris.Tooltip({"makes bot stationary"})
+	end
+	if iris.Checkbox({"delete on death"}, {isChecked = kickondeath}).hovered() then
+		--iris.Tooltip({"bot wont spawn back"})
+	end
+	
+	--------------
 
-	iris.Checkbox({"dummy"}, {isChecked = dummy})
-	iris.Checkbox({"delete on death"}, {isChecked = kickondeath})
-
-	iris.RadioButton({"spawn on player", "player"}, {index = spawnposState})
+	if iris.RadioButton({"spawn on player", "player"}, {index = spawnposState}).hovered() then
+		--iris.Tooltip({"bot spawns at player vector3 using framework.character.get_position()"})
+	end
 	iris.RadioButton({"spawn at position", "v3"}, {index = spawnposState})
 
 	if spawnposState.value == "v3" then
@@ -87,7 +102,8 @@ iris:Connect(function()
 		iris.End()
 	end
 
-	iris.SliderNum({"health", 1, 0, 1000}, {number = healthState})
+	iris.SliderNum({"health", 1, 0, 500}, {number = healthState})
+	iris.Text({`dummy: {dummy.value}, kickondeath: {kickondeath.value}, health: {healthState.value} , v3: {customV3.value}`, nil, Color3.fromRGB(48, 48, 48)})
 
 	if iris.Button({"spawn bot"}).clicked() then
 		local targetPos = framework.character.get_position()
